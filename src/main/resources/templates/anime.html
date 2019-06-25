@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="referrer" content="no-referrer"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>b站番剧分析</title>
+    <!-- Bootstrap core CSS-->
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css">
+    <!-- Page level plugin CSS-->
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/sb-admin.css}" rel="stylesheet">
+
+    <script src="https://echarts.baidu.com/dist/echarts.js"></script>
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+<div th:replace="index::#mainNav"></div>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Area Chart Example-->
+        <div class="card mb-3">
+            <div class="row">
+                <div class="col-sm-4 text-center my-auto">
+                    <img width="300" height="380" th:src="${img}" alt="">
+                </div>
+                <div class="col-sm-8 my-auto" id="episode" style="width: 100%;height:400px;"></div>
+            </div>
+
+        </div>
+
+        <div class="card-body">
+            <div>
+                <table class="table table-striped table-hover" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>剧名</th>
+                        <th>日期</th>
+                        <th>上传者</th>
+                        <th>插放量</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody-result">
+                    </tbody>
+                </table>
+                <div id="pageBox" style="width:1000px;margin: 30px auto;"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('episode'));
+        var pathname = window.location.pathname;
+        var tbody=window.document.getElementById("tbody-result");
+
+        var episode = [];
+        var view = [];
+        var title = [];
+	    //AJAX接收数据主体
+        $.ajax({
+            type:"GET",
+            url:"/api/" + pathname,
+            dataType:"json",
+            async:false,
+            success:function (result) {
+                var str = "";
+                for (var i = 0; i < result.value.length; i++){
+                    episode.push(result.value[i].title);
+                    view.push(result.value[i].view);
+
+                    str += "<tr>" +
+                        "<td>" + result.value[i].title+
+                        '<a href="/view_version?tableName=episode_detail&rowName='+result.value[i].aid+'&familyName=detail_info&qualifier=view">' +
+                        " (播放曲线)" + "</a>" + "</td>" +
+                        "<td>" + result.value[i].ptime+ "</td>" +
+                        "<td>" + result.value[i].ups + "</td>" +
+                        "<td>" + result.value[i].view+ "</td>" +
+                        "</tr>";
+                }
+                title.push(result.title);
+                tbody.innerHTML = str;
+            },
+            error :function(errorMsg) {
+                alert("获取后台数据失败！");
+            }
+        });
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '每集播放量',
+                subtext: '数据来自bilibili'
+            },
+            tooltip: {},
+            legend: {
+                data: title
+            },
+
+            xAxis: {
+        	    //结合
+                data: episode,
+                axisLabel:{
+                    interval:0,
+                    rotate:45
+                    },
+            },
+
+            yAxis: [{
+                type : 'value',
+                axisLabel : {
+                formatter: function(value){
+                    if (value >=10000) {
+        			value = value/10000+'w';
+        		}else if(value <1000){
+        			value = value/1000+'k';
+        		}
+        		return value
+                }
+            }
+            }],
+            series: [{
+                name: title,
+                type: 'bar',
+                //结合
+                data: view
+            }]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+    </script>
+    <!-- /.container-fluid-->
+    <!-- /.content-wrapper-->
+    <footer class="sticky-footer">
+        <div class="container">
+            <div class="text-center">
+                <small>链接：<a href="https://www.bilibili.com/" target="_blank" title="bilibili">bilibili</a>
+                </small>
+            </div>
+        </div>
+    </footer>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fa fa-angle-up"></i>
+    </a>
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <!-- Page level plugin JavaScript-->
+    <script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/sb-admin.min.js}"></script>
+    <!-- Custom scripts for this page-->
+    <script th:src="@{/js/sb-admin-datatables.min.js}"></script>
+</div>
+</body>
+
+</html>

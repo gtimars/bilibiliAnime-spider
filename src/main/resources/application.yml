@@ -1,0 +1,21 @@
+hbase:
+  zookeeper:
+    quorum: 192.168.80.172,192.168.80.173,192.168.80.174
+    port: 2181
+
+spring:
+  data:
+    elasticsearch:
+      cluster-name: es6-cluster
+      cluster-nodes: 192.168.80.172:9300,192.168.80.173:9300,192.168.80.174:9300
+
+  thymeleaf:
+    cache: false
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+
+
