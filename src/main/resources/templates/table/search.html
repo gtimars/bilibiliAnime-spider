@@ -46,7 +46,7 @@
                             </thead>
                             <tbody>
                             <tr th:each="one:${search}">
-                                <td >[[${one.title}]]
+                                <td>[[${one.title}]]
                                     <a th:text=" (查看播放曲线图)" th:href="@{/view_version?tableName=episode_detail&rowName=} +
                                     ${one.aid} + @{&familyName=detail_info&qualifier=view}"></a>
                                 </td>
@@ -175,8 +175,7 @@
                 </div>
             </div>
         </div>
-        <!-- /.container-fluid-->
-        <!-- /.content-wrapper-->
+
         <footer class="sticky-footer">
             <div class="container">
                 <div class="text-center">

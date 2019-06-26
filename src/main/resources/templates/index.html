@@ -85,162 +85,20 @@
 </nav>
 <div class="content-wrapper">
     <div class="container-fluid">
-        <!-- Icon Cards-->
-        <!-- Area Chart Example-->
         <div class="card mb-3">
             <div class="card-header">
                 <i class="fa fa-bar-chart"></i> 最受欢迎番剧
             </div>
             <div class="card-body" id="main" style="width: 100%;height:400px;"></div>
-            <script type="text/javascript">
-            var myChart = echarts.init(document.getElementById('main'));
-
-            var title = [];
-            var value = [];
-	        //AJAX接收数据主体
-            $.ajax({
-                type:"GET",
-                url:"/anime/favorite/10/top",
-                dataType:"json",
-                async:false,
-                success:function (result) {
-                    for (var i = 0; i < result.length; i++){
-                        title.push(result[i].title);
-                        value.push(result[i].value);
-                    }
-
-                },
-                error :function(errorMsg) {
-                alert("获取后台数据失败！");
-                }
-            });
-
-            // 指定图表的配置项和数据
-            var option = {
-                title: {
-                    text: '追番人数',
-                    subtext: '数据来自bilibili'
-                },
-                tooltip: {},
-                legend: {
-                    data:['favorite']
-                },
-
-                xAxis: {
-        	    //结合
-                    data: title,
-                    axisLabel:{
-                        interval:0,
-                        rotate:45
-                    },
-                },
-
-                yAxis: [{
-                type : 'value',
-                axisLabel : {
-                    formatter: function(value){
-                        if (value >=10000) {
-        			    value = value/10000+'w';
-        		    }else if(value <1000){
-        			    value = value/1000+'k';
-        		    }
-        		    return value
-                    }
-                }
-                }],
-                series: [{
-                    name: 'favorite',
-                    type: 'bar',
-                    //结合
-                    data: value
-                }]
-                };
-
-                // 使用刚指定的配置项和数据显示图表。
-                myChart.setOption(option);
-            </script>
         </div>
-
 
         <div class="row">
             <div class="col-lg-8">
-                <!-- Example Bar Chart Card-->
                 <div class="card mb-3">
                     <div class="card-header">
                         <i class="fa fa-bar-chart"></i> 播放量柱状图
                     </div>
                     <div class="card-body" id="main2" style="width: 100%;height:400px;"></div>
-                    <script type="text/javascript">
-                    var myChart = echarts.init(document.getElementById('main2'));
-
-                    var title = [];
-                    var value = [];
-	                //AJAX接收数据主体
-                    $.ajax({
-                        type:"GET",
-                        url:"/detail/view/10/top",
-                        dataType:"json",
-                        async:false,
-                        success:function (result) {
-                            for (var i = result.length-1; i >= 0; i--){
-                                title.push(result[i].title);
-                                value.push(result[i].value);
-                            }
-
-                        },
-                         error :function(errorMsg) {
-                            alert("获取后台数据失败！");
-                        }
-                    });
-
-	                var option = {
-	                    color: ['#3398DB'],
-                        title: {
-                            text: '单集/合集 插放总量排行',
-                            subtext: '数据来自bilibili'
-                        },
-                        tooltip: {
-                            trigger: 'axis',
-                            axisPointer: {
-                                type: 'shadow'
-                            }
-                        },
-                        legend: {
-                            data: ['view']
-                        },
-
-                        xAxis: {
-                            type: 'value',
-                            axisLabel : {
-                                formatter: function(value){
-                                    if (value >=10000) {
-        			                value = value/10000+'w';
-        		                }else if(value <1000){
-        			                value = value/1000+'k';
-        		                }
-        		            return value
-                                }
-                            }
-                        },
-                        yAxis: {
-                            type: 'category',
-                            axisLabel:{
-                                interval:0,
-                                rotate:10
-                            },
-                            data: title
-                        },
-                        series: [
-                        {
-                            name: 'view',
-                            type: 'bar',
-                            data: value
-                        },
-                        ]
-                    };
-                    myChart.setOption(option);
-
-                    </script>
                 </div>
             </div>
 
@@ -251,76 +109,9 @@
                         <i class="fa fa-pie-chart"></i> 评分
                     </div>
                     <div class="card-body" id="main3" style="width: 100%;height:400px;"></div>
-                    <script type="text/javascript">
-                    var myChart = echarts.init(document.getElementById('main3'));
-                    var score = [];
-                    var value = [];
 
-                    //AJAX接收数据主体
-                    $.ajax({
-                        type:"GET",
-                        url:"/anime/score",
-                        dataType:"json",
-                        async:false,
-                        success:function (result) {
-                            for (var i = 0; i < result.length; i++){
-                                if(i==0){
-                                    score.push("无评分");
-                                    value.push({name: "无评分",value: result[i].value});
-                                } else if(i>0){
-                                    score.push(result[i].score);
-                                    value.push({name: result[i].score,value: result[i].value});
-                                }
-                            }
-                        },
-                        error :function(errorMsg) {
-                            alert("获取后台数据失败！");
-                        }
-                    });
-                    var option = {
-                        tooltip: {
-                            trigger: 'item',
-                            formatter: "{a} <br/>{b}: {c} ({d}%)"
-                        },
-                        legend: {
-                            orient: 'vertical',
-                            x: 'left',
-                            data: score
-                        },
-                        series: [
-                        {
-                            name:'评分区间',
-                            type:'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
-                            label: {
-                                normal: {
-                                    show: false,
-                                    position: 'center'
-                                },
-                            emphasis: {
-                                show: true,
-                                textStyle: {
-                                    fontSize: '30',
-                                    fontWeight: 'bold'
-                                }
-                            }
-                        },
-                        labelLine: {
-                            normal: {
-                                show: false
-                            }
-                        },
-                        data: value
-                        }
-                        ]
-                        };
-                        myChart.setOption(option);
-                    </script>
                 </div>
             </div>
-            <!-- /.container-fluid-->
-            <!-- /.content-wrapper-->
             <footer class="sticky-footer">
                 <div class="container">
                     <div class="text-center">
@@ -345,6 +136,8 @@
             <script th:src="@{/js/sb-admin.min.js}"></script>
             <!-- Custom scripts for this page-->
             <script th:src="@{/js/sb-admin-datatables.min.js}"></script>
+            <script th:src="@{js/index-chart.js}"></script>
+            <!--<script th:src="@{js/view-index-chart.js}"></script>-->
         </div>
     </div>
 </div>
